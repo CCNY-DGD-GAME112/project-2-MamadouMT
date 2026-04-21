@@ -1,15 +1,13 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
-    public float horizontalInput;
-    public float verticalInput;
-    public float speed = 5f;
-    public float turnSpeed = 8f;
+    public float speed = 8f;
     public float jumpForce = 5f;
 
-   public bool isGrounded;
-   public Rigidbody rb;
+    public Rigidbody rb;
+    public bool grounded;
 
     void Start()
     {
@@ -18,19 +16,17 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput = Input.GetAxis("Vertical");
+        // WASD movement
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
 
-        // Move left and right
-        transform.Translate(Vector3.forward * Time.deltaTime * turnSpeed * horizontalInput, Space.World);
-
-        // Move forward and backward
-        transform.Translate(Vector3.right * Time.deltaTime * speed * verticalInput, Space.World);
+        transform.Translate(new Vector3(x, 0, z) * speed * Time.deltaTime);
 
         // Jump
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && grounded)
         {
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            grounded = false;
         }
     }
 
@@ -38,15 +34,15 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            isGrounded = true;
+            grounded = true;
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (collision.gameObject.CompareTag("Enemy"))
         {
-            isGrounded = false;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
 }
