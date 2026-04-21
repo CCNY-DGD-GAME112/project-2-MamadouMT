@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class GameManager : MonoBehaviour
+public partial class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
